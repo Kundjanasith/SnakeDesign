@@ -3,24 +3,25 @@ package com.ske.snakebaddesign.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.ske.snakebaddesign.R;
 import com.ske.snakebaddesign.guis.BoardView;
+import com.ske.snakebaddesign.models.Game;
 
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    private int boardSize;
-    private int p1Position;
-    private int p2Position;
+//    private int boardSize;
+//    private int p1Position;
+//    private int p2Position;
     private int turn;
-
+    private Game game;
     private BoardView boardView;
     private Button buttonTakeTurn;
     private Button buttonRestart;
@@ -60,12 +61,14 @@ public class GameActivity extends AppCompatActivity {
 
     private void resetGame() {
         turn = 0;
-        p1Position = 0;
-        p2Position = 0;
-        boardSize = 6;
-        boardView.setBoardSize(boardSize);
-        boardView.setP1Position(p1Position);
-        boardView.setP2Position(p2Position);
+//        p1Position = 0;
+//        p2Position = 0;
+//        boardSize = 6;
+        game = new Game();
+        game.getBoard().setSize(3);
+        boardView.setBoardSize(game.getBoard().getSize());
+        boardView.setP1Position(game.getPlayer1().getPosition());
+        boardView.setP2Position(game.getPlayer2().getPosition());
     }
 
     private void takeTurn() {
@@ -83,12 +86,16 @@ public class GameActivity extends AppCompatActivity {
 
     private void moveCurrentPiece(int value) {
         if (turn % 2 == 0) {
-            p1Position = adjustPosition(p1Position, value);
-            boardView.setP1Position(p1Position);
+//            p1Position = adjustPosition(p1Position, value);
+//            boardView.setP1Position(p1Position);
+            game.getPlayer1().setPosition(adjustPosition(game.getPlayer1().getPosition(),value));
+            boardView.setP1Position(game.getPlayer1().getPosition());
             textPlayerTurn.setText("Player 2's Turn");
         } else {
-            p2Position = adjustPosition(p2Position, value);
-            boardView.setP2Position(p2Position);
+//            p2Position = adjustPosition(p2Position, value);
+//            boardView.setP2Position(p2Position);
+            game.getPlayer2().setPosition(adjustPosition(game.getPlayer2().getPosition(),value));
+            boardView.setP2Position(game.getPlayer2().getPosition());
             textPlayerTurn.setText("Player 1's Turn");
         }
         checkWin();
@@ -97,7 +104,7 @@ public class GameActivity extends AppCompatActivity {
 
     private int adjustPosition(int current, int distance) {
         current = current + distance;
-        int maxSquare = boardSize * boardSize - 1;
+        int maxSquare = game.getBoard().getSize() * game.getBoard().getSize() - 1;
         if(current > maxSquare) {
             current = maxSquare - (current - maxSquare);
         }
@@ -113,9 +120,9 @@ public class GameActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         };
-        if (p1Position == boardSize * boardSize - 1) {
+        if (game.getPlayer1().getPosition() == game.getBoard().getSize() * game.getBoard().getSize() - 1) {
             msg = "Player 1 won!";
-        } else if (p2Position == boardSize * boardSize - 1) {
+        } else if (game.getPlayer2().getPosition() == game.getBoard().getSize() * game.getBoard().getSize() - 1) {
             msg = "Player 2 won!";
         } else {
             return;
